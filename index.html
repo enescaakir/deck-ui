@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1280">
+    <title>Deck UI</title>
+    <link href="./style.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@1.13.14/iconfont/material-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<body class="w-[1280px] h-[400px] mx-auto flex gap-5 p-4 border-2 border-white">
+    <!-- Left Column -->
+    <div class="flex-1 flex flex-col justify-between p-2 gap-4">
+        <div class="h-[35%] rounded-[18px] flex items-center justify-center gap-10 bg-white/20 shadow-sm">
+            <a href="#" onclick="system_control('shutdow')"
+                class="w-[80px] h-[80px] rounded-[100%] flex items-center justify-center bg-custom-red">
+                <span class="material-icons-round text-white text-[50px]">power_settings_new</span>
+            </a>
+
+            <a href="#" onclick="system_control('standby')"
+                class="w-[80px] h-[80px] rounded-[100%] flex items-center justify-center bg-custom-blue">
+                <span id="sleepBtn" class="material-icons-round rotate-45 text-white text-[50px]">brightness_2</span>
+            </a>
+
+            <a href="#" onclick="system_control('lock')"
+                class="w-[80px] h-[80px] rounded-[100%] flex items-center justify-center bg-custom-dark">
+                <span class="material-icons-round text-white text-[50px]">lock</span>
+            </a>
+
+            <a href="#" onclick="setVolumeLevel('mute')"
+                class="w-[80px] h-[80px] rounded-[100%] flex items-center justify-center bg-custom-gray">
+                <span id="volumeBtn" class="material-icons-round text-white text-[50px]">volume_up</span>
+            </a>
+        </div>
+        <div class="h-[65%] flex items-center justify-center rounded-[18px]">
+            <div id="clock" class="text-white text-[170px] leading-none inline-block font-['Roboto_Mono']">00:00</div>
+        </div>
+    </div>
+
+    <!-- Middle Column -->
+    <div class="flex-[0.6] flex p-2 gap-4">
+        <!-- Brightness -->
+        <div id="brightnessSlider"
+            class="w-1/2 h-full rounded-[18px] bg-white/20 shadow-sm flex flex-col items-center justify-end relative cursor-pointer overflow-hidden">
+            <div class="absolute bottom-0 w-full bg-white rounded-b-[18px] transition-all duration-300"></div>
+            <span class="material-icons-round text-white text-[40px] mb-4 z-10">light_mode</span>
+        </div>
+
+        <!-- Volume -->
+        <div id="volumeSlider"
+            class="w-1/2 h-full rounded-[18px] bg-white/20 shadow-sm flex flex-col items-center justify-end relative cursor-pointer overflow-hidden">
+            <div class="absolute bottom-0 w-full bg-white rounded-b-[18px] transition-all duration-300"></div>
+            <span class="material-icons-round text-white text-[40px] mb-4 z-10">volume_up</span>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="flex-[0.9] flex flex-col justify-between p-2 overflow-hidden">
+        <div class="h-full rounded-[18px] bg-white/20 shadow-sm flex flex-col items-center pt-4 overflow-hidden">
+            <!-- Title & Artist Info -->
+            <div id="media-info" class="w-[90%] h-[35px] mb-3 flex items-center gap-2 overflow-hidden">
+                <!-- Artist -->
+                <div id="media-artist"
+                    class="flex-none text-white text-[18px] font-semibold whitespace-nowrap pr-3 border-r border-white/50">
+
+                </div>
+
+                <!-- Title Marquee Container -->
+                <div class="relative overflow-hidden flex-1">
+                    <div id="media-title"
+                        class="text-white text-[18px] font-medium whitespace-nowrap animate-marquee inline-block">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Slider -->
+            <input id="media-position" type="range"
+                class="h-[3px] w-[85%] appearance-none bg-white/50 rounded-lg accent-white" value="0" />
+
+            <!-- Control Buttons -->
+            <!-- <div class="flex justify-center gap-6 mt-4">
+                <button class="text-white" onclick="media_control('previous')">
+                    <span class="material-icons-round text-[35px]">skip_previous</span>
+                </button>
+                <button id="play_pause_btn" onclick="media_control('play')"
+                    class="flex items-center justify-center w-[55px] h-[55px] bg-white/20 text-white rounded-[100%]">
+                    <span class="material-icons-round text-[40px]">play_arrow</span>
+                </button>
+                <button class="text-white" onclick="media_control('next')">
+                    <span class="material-icons-round text-[35px]">skip_next</span>
+                </button>
+            </div> -->
+
+            <!-- Position/Duration -->
+            <div class="flex justify-center gap-2 mt-2 text-white text-xl">
+                <span id="position">00:00:00</span>/<span id="duration">00:00:00</span>
+            </div>
+
+            <!-- Crypto Info -->
+            <!-- <div id="crypto-info" class="w-[90%] mt-5 flex justify-between">
+                <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Market data by TradingView</span></a></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                {
+                "colorTheme": "dark",
+                "dateRange": "12M",
+                "locale": "en",
+                "largeChartUrl": "",
+                "isTransparent": true,
+                "showFloatingTooltip": false,
+                "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
+                "plotLineColorFalling": "rgba(41, 98, 255, 1)",
+                "gridLineColor": "rgba(240, 243, 250, 0)",
+                "scaleFontColor": "#DBDBDB",
+                "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+                "belowLineFillColorFalling": "rgba(41, 98, 255, 0.12)",
+                "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+                "belowLineFillColorFallingBottom": "rgba(41, 98, 255, 0)",
+                "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
+                "tabs": [
+                    {
+                    "title": "Indices",
+                    "symbols": [
+                        {
+                        "s": "BINANCE:BTCUSDT",
+                        "d": "Bitcoin",
+                        "base-currency-logoid": "crypto/XTVCBTC",
+                        "currency-logoid": "crypto/XTVCUSDT"
+                        },
+                        {
+                        "s": "BINANCE:ETHUSDT",
+                        "d": "Ethereum",
+                        "base-currency-logoid": "crypto/XTVCETH",
+                        "currency-logoid": "crypto/XTVCUSDT"
+                        },
+                        {
+                        "s": "CRYPTOCAP:BTC.D",
+                        "d": "BTC Dominance",
+                        "logoid": "crypto/XTVCBTC"
+                        }
+                    ],
+                    "originalTitle": "Indices"
+                    }
+                ],
+                "support_host": "https://www.tradingview.com",
+                "backgroundColor": "#131722",
+                "width": "100%",
+                "height": "170%",
+                "showSymbolLogo": true,
+                "showChart": false
+                }
+                </script>
+                </div> -->
+
+            <div id="gif-content" class="mt-7 w-[350px] h-[200px]">
+                <img 
+                    class="w-full h-full rounded-xl object-cover" 
+                    src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExczNzYnluMmsxMGN5Mnl4dXpkOGZ6Zno1NTl2bWhqYXloY3d5ZDMxeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HMHiWYQraoBZC/giphy.gif" 
+                />
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    initiliazeComponents()
+
+    function initiliazeComponents() {
+        fetchVolumeLevel()
+        setupVerticalSlider("volumeSlider");
+
+        fetchBrightnessLevel()
+        setupVerticalSlider("brightnessSlider");
+
+        fetchCurrentMediaInfo()
+
+        setInterval(() => {
+            fetchClock()
+        }, 1000);
+    }
+
+    //#region Volume WebSocket
+    const volumeSlider = document.getElementById("volumeSlider");
+    const volumeFill = volumeSlider.querySelector("div");
+
+    const audioWs = new WebSocket("ws://localhost:5051/");
+    audioWs.onmessage = ({ data }) => {
+        volumeFill.style.height = `${data}%`;
+        checkIconColors(data, volumeSlider, "volumeSlider")
+        if (data <= 0)
+            changeVolumeIcons("off");
+        else
+            changeVolumeIcons("on");
+    };
+    //#endregion
+
+    //#region BackgroundImage WebSocket
+    const backgroundImageWs = new WebSocket("ws://localhost:5052/");
+    backgroundImageWs.onmessage = ({ data }) => {
+        document.body.style.background = `url('http://localhost:2837/bg?t=${Date.now()}') no-repeat center center/cover`;
+    };
+    //#endregion
+
+    //#region Brightness WebSocket
+    const brightnessSlider = document.getElementById("brightnessSlider");
+    const brightnessFill = brightnessSlider.querySelector("div");
+
+    const brightnessWs = new WebSocket("ws://localhost:5050/");
+    brightnessWs.onmessage = ({ data }) => {
+        brightnessFill.style.height = `${data}%`;
+        checkIconColors(data, brightnessSlider, "brightnessSlider")
+    };
+    //#endregion
+
+    //#region Media Info
+    const mediaWs = new WebSocket("ws://localhost:3728/ws/media");
+    mediaWs.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setMediaInfo(data.artist, data.title, data.position, data.duration)
+    };
+    //#endregion
+
+    function fetchClock() {
+        document.getElementById("clock").innerText = new Date().toTimeString().slice(0, 5)
+    }
+
+    function fetchVolumeLevel() {
+        const container = document.getElementById("volumeSlider");
+        const fill = container.querySelector("div");
+
+        fetch("http://localhost:2837/volume", { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => {
+                fill.style.height = `${data}%`;
+                if (data > 10) {
+                    var volumeIcon = container.querySelector("span");
+                    volumeIcon.classList.remove("text-white")
+                    volumeIcon.classList.add("text-custom-blue")
+                }
+
+                if (data <= 0) {
+                    volumeMuted = true;
+                    changeVolumeIcons('off')
+                }
+
+            })
+    }
+
+    function fetchBrightnessLevel() {
+        const container = document.getElementById("brightnessSlider");
+        const fill = container.querySelector("div");
+
+        fetch("http://localhost:2837/brightness", { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => {
+                fill.style.height = `${data[0]}%`;
+                if (data[0] > 10) {
+                    var volumeIcon = container.querySelector("span");
+                    volumeIcon.classList.remove("text-white")
+                    volumeIcon.classList.add("text-amber-400")
+                }
+            })
+    }
+
+    function fetchCurrentMediaInfo() {
+        // var title = document.getElementById("media-title");
+        // var artist = document.getElementById("media-artist");
+
+        // var currentPosition = document.getElementById("media-position");
+        // var duration = document.getElementById("media-duration");
+
+        // fetch("http://localhost:3728/media", { method: "GET" })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         if (data.error != undefined)
+        //             return;
+        //     })
+    }
+
+    let volumeMuted = false;
+
+    function setVolumeLevel(value) {
+        fetch("http://localhost:2837/volume?level=" + value, { method: "GET" });
+        if (value == 'mute') {
+            volumeMuted = !volumeMuted;
+            changeVolumeIcons(volumeMuted ? 'off' : 'on');
+        }
+        else if (value <= 0)
+            volumeMuted = true;
+        else
+            volumeMuted = false;
+    }
+
+    function setBrightnessLevel(value) {
+        fetch("http://localhost:2837/brightness?level=" + value, { method: "GET" });
+    }
+
+    function system_control(action) {
+        fetch("http://localhost:2837/system?action=" + action, { method: "GET" });
+    }
+
+    function media_control(action) {
+        fetch("http://localhost:5051/media?action=" + action, { method: "GET" });
+    }
+
+
+    function setupVerticalSlider(containerId) {
+        const container = document.getElementById(containerId);
+        const fill = container.querySelector("div");
+
+        // Optional: Tap to set value instantly
+        container.addEventListener("click", (e) => {
+            updateFill(e.clientY);
+        });
+
+        function updateFill(clientY) {
+            const rect = container.getBoundingClientRect();
+            let percent = (rect.bottom - clientY) / rect.height;
+            percent = Math.max(0, Math.min(1, percent));
+            let value = percent * 100;
+            fill.style.height = `${value}%`;
+
+            if (containerId == "volumeSlider")
+                setVolumeLevel(parseInt(value))
+            if (containerId == "brightnessSlider")
+                setBrightnessLevel(parseInt(value))
+
+            checkIconColors(value, container, containerId)
+        };
+    }
+
+    function startSmartMarquee(titleEl) {
+        const container = titleEl.parentElement;
+        const content = titleEl;
+
+        let offset = 0;
+        let contentWidth = content.scrollWidth;
+        let containerWidth = container.offsetWidth;
+
+        let resetDelay = 1000; // 1 saniye sabit kalma süresi
+        let speed = 0.25; // px/frame
+        let isScrolling = false;
+
+        function scroll() {
+            offset -= speed;
+            if (-offset >= contentWidth) {
+                offset = containerWidth; // Aniden başa dön!
+            }
+
+            content.style.transform = `translateX(${offset}px)`;
+
+            if (isScrolling) {
+                requestAnimationFrame(scroll);
+            }
+        }
+
+        // Reset offset
+        content.style.transform = "translateX(0)";
+        isScrolling = false;
+
+        // Başlangıçta sabit dursun
+        setTimeout(() => {
+            offset = 0;
+            isScrolling = true;
+            requestAnimationFrame(scroll);
+        }, resetDelay);
+    }
+
+    function setMediaInfo(artist, title, position, duration) {
+        const artistEl = document.getElementById("media-artist");
+        const titleEl = document.getElementById("media-title");
+
+        artistEl.textContent = artist;
+        titleEl.textContent = title;
+
+        titleEl.style.transform = "translateX(0)";
+        titleEl.style.transition = "none"; // Animasyonu devre dışı bırak
+
+        const containerWidth = titleEl.parentElement.offsetWidth;
+        const contentWidth = titleEl.scrollWidth;
+
+        // Yeterince uzun mu kontrolü
+        if (contentWidth > containerWidth) {
+            startSmartMarquee(titleEl);
+        }
+
+        var currentPosition = document.getElementById("media-position");
+
+        var positionDiv = document.getElementById("position");
+        var durationDiv = document.getElementById("duration");
+
+        positionDiv.innerText = position;
+        durationDiv.innerText = duration;
+
+        // saniyeye çevir
+        const posSec = timeToSeconds(position);
+        const durSec = timeToSeconds(duration);
+
+        // oranla 100 üzerinden değer hesapla
+        let value = 0;
+        if (durSec > 0) {
+            value = (posSec / durSec) * 100;
+        }
+
+        currentPosition.value = value.toFixed(2);
+    }
+
+
+
+    function checkIconColors(value, container, containerId) {
+        var icon = container.querySelector("span");
+        if (value > 10) {
+            if (containerId == "volumeSlider") {
+                icon.classList.remove("text-white")
+                icon.classList.add("text-custom-blue")
+            }
+            if (containerId == "brightnessSlider") {
+                icon.classList.remove("text-white")
+                icon.classList.add("text-amber-400")
+            }
+            return
+        }
+
+        if (containerId == "volumeSlider") {
+            icon.classList.remove("text-custom-blue")
+            icon.classList.add("text-white")
+        }
+        if (containerId == "brightnessSlider") {
+            icon.classList.remove("text-amber-400")
+            icon.classList.add("text-white")
+        }
+    }
+
+    function changeVolumeIcons(status) {
+        //Slider Icon
+        const volumeSlider = document.getElementById("volumeSlider");
+        var sliderIcon = volumeSlider.querySelector("span");
+
+        //System Icon
+        var systemIcon = document.getElementById("volumeBtn");
+
+        if (status == "on") {
+            sliderIcon.innerText = "volume_up";
+            systemIcon.innerText = "volume_up";
+            return;
+        }
+
+        if (status == "off") {
+            sliderIcon.innerText = "volume_off";
+            systemIcon.innerText = "volume_off";
+        }
+    }
+
+    function timeToSeconds(timeStr) {
+        const [h, m, s] = timeStr.split(":").map(Number);
+        return h * 3600 + m * 60 + s;
+    }
+
+</script>
+
+</html>
